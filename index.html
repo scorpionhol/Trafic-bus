@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trafic Bus - Logiciel de Gestion des Réparations et Peinture</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="style.css?v=1.0.2">
+  <!-- Chart.js for reports and statistics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons for premium visual icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="app-locked">
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <div class="login-logo-container">
+        <svg class="login-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#818cf8" />
+              <stop offset="100%" stop-color="#4f46e5" />
+            </linearGradient>
+            <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0ea5e9" />
+              <stop offset="100%" stop-color="#6366f1" />
+            </linearGradient>
+          </defs>
+          <rect x="15" y="25" width="70" height="40" rx="8" fill="url(#logoGrad)" />
+          <rect x="22" y="30" width="16" height="13" rx="2" fill="#0b0f19" fill-opacity="0.7" />
+          <rect x="42" y="30" width="16" height="13" rx="2" fill="#0b0f19" fill-opacity="0.7" />
+          <rect x="62" y="30" width="16" height="13" rx="2" fill="#0b0f19" fill-opacity="0.7" />
+          <circle cx="25" cy="53" r="3.5" fill="#fef08a" />
+          <circle cx="75" cy="53" r="3.5" fill="#fef08a" />
+          <circle cx="32" cy="65" r="9" fill="#090d16" />
+          <circle cx="32" cy="65" r="4.5" fill="#475569" />
+          <circle cx="68" cy="65" r="9" fill="#090d16" />
+          <circle cx="68" cy="65" r="4.5" fill="#475569" />
+          <path d="M15 48 H85" stroke="url(#glowGrad)" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <h2>Trafic Bus</h2>
+      <p class="login-subtitle">Gestion de Flotte & Ateliers ERP</p>
+      <form id="login-form" autocomplete="off">
+        <div class="form-group">
+          <label for="login-username">Nom d'utilisateur</label>
+          <div class="input-icon-wrapper">
+            <i data-lucide="user" class="input-icon"></i>
+            <input type="text" class="form-control icon-padding" id="login-username" placeholder="Ex: admin" required>
+          </div>
+        </div>
+        <div class="login-options">
+          <label class="checkbox-container">
+            <input type="checkbox" id="remember-me">
+            <span class="checkmark"></span>
+            <span class="checkbox-text">Se souvenir de moi</span>
+          </label>
+        </div>
+        <div class="login-error" id="login-error" role="alert"></div>
+        <button class="btn btn-primary btn-login" type="submit">
+          <span class="btn-text">Se connecter</span>
+          <div class="btn-spinner" id="login-spinner"></div>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-icon">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;">
+          <rect x="15" y="25" width="70" height="40" rx="8" fill="white" />
+          <rect x="22" y="30" width="16" height="13" rx="2" fill="#6366f1" />
+          <rect x="42" y="30" width="16" height="13" rx="2" fill="#6366f1" />
+          <rect x="62" y="30" width="16" height="13" rx="2" fill="#6366f1" />
+          <circle cx="25" cy="53" r="3.5" fill="#f59e0b" />
+          <circle cx="75" cy="53" r="3.5" fill="#f59e0b" />
+          <circle cx="32" cy="65" r="9" fill="#1e293b" />
+          <circle cx="68" cy="65" r="9" fill="#1e293b" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>Trafic Bus</h1>
+        <p>ERP Réparations & Peinture</p>
+      </div>
+    </div>
+    <ul class="sidebar-menu">
+      <li class="sidebar-item">
+        <a class="sidebar-link active" onclick="switchTab('dashboard')">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Tableau de bord</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('reparations')">
+          <i data-lucide="wrench"></i>
+          <span>Réparations</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('peinture')">
+          <i data-lucide="paint-brush"></i>
+          <span>Peinture</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('suivi-peinture')">
+          <i data-lucide="clipboard-check"></i>
+          <span>Suivi Peinture — Excel</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('suivi-carrosserie')">
+          <i data-lucide="hammer"></i>
+          <span>Suivi Carrosserie — Excel</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('incidents')">
+          <i data-lucide="alert-triangle"></i>
+          <span>Incidents</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('planning')">
+          <i data-lucide="calendar"></i>
+          <span>Planning</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('bus')">
+          <i data-lucide="bus"></i>
+          <span>Véhicules (Bus)</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('garages')">
+          <i data-lucide="home"></i>
+          <span>Garages</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('chauffeurs')">
+          <i data-lucide="users"></i>
+          <span>Chauffeurs</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('pieces')">
+          <i data-lucide="package"></i>
+          <span>Pièces Détachées</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('fournisseurs')">
+          <i data-lucide="truck"></i>
+          <span>Fournisseurs</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('users')">
+          <i data-lucide="shield"></i>
+          <span>Utilisateurs</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('backup-api')">
+          <i data-lucide="database"></i>
+          <span>Sauvegarde & API</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('audit')">
+          <i data-lucide="clipboard-list"></i>
+          <span>Journal d'audit</span>
+        </a>
+      </li>
+      <li class="sidebar-item">
+        <a class="sidebar-link" onclick="switchTab('settings')">
+          <i data-lucide="settings"></i>
+          <span>Paramètres</span>
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="avatar-container">
+          <div class="user-avatar" id="header-avatar">JA</div>
+          <span class="status-dot online"></span>
+        </div>
+        <div class="user-info">
+          <div class="user-name" id="header-username">Jean Administrateur</div>
+          <div class="user-role" id="header-role">admin</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Work Area -->
+  <main class="main-content">
+    
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-search">
+        <i data-lucide="search"></i>
+        <input type="text" id="global-search" placeholder="Rechercher bus, chauffeur, réparation..." oninput="handleGlobalSearch()">
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" onclick="logoutUser()" title="Se déconnecter">
+          <i data-lucide="log-out"></i> Déconnexion
+        </button>
+        <!-- Theme Toggle -->
+        <button class="icon-btn" onclick="toggleTheme()" title="Changer le thème">
+          <i data-lucide="sun" id="theme-icon"></i>
+        </button>
+        <!-- Notifications Bell -->
+        <button class="icon-btn" onclick="openNotifications()" title="Notifications">
+          <i data-lucide="bell"></i>
+          <span class="badge-dot" id="notif-dot" style="display:none;"></span>
+        </button>
+        <!-- Currency Selector -->
+        <select class="role-selector" id="currency-selector" onchange="changeCurrency(this.value)" title="Devise d'affichage">
+          <option value="USD">USD ($)</option>
+          <option value="CDF">CDF (FC)</option>
+        </select>
+        <!-- Role Switcher for local simulation -->
+        <select class="role-selector" id="role-switcher" onchange="changeUser(this.value)" title="Changer d'utilisateur">
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+    </header>
+
+    <!-- Scrollable content area -->
+    <div class="page-body" id="page-body">
+
+      <!-- ================= TABLEAU DE BORD ================= -->
+      <section id="view-dashboard" class="view-container active">
+        <div class="actions-row">
+          <h2>Tableau de bord</h2>
+          <span id="dashboard-date" class="list-meta">Lundi, 13 Juillet 2026</span>
+        </div>
+        
+        <!-- KPI Stats -->
+        <div class="grid-stats" id="dashboard-kpis">
+          <!-- Rendered dynamically in app.js -->
+        </div>
+
+        <!-- Dashboard Charts & Lists -->
+        <div class="grid-dashboard">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Coûts des Réparations par Mois</h3>
+              <i data-lucide="trending-up" class="text-muted"></i>
+            </div>
+            <div style="position: relative; height: 300px; width: 100%;">
+              <canvas id="cost-chart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Alertes & Quotas</h3>
+              <i data-lucide="alert-circle" class="text-muted"></i>
+            </div>
+            <div id="dashboard-alerts" style="display:flex; flex-direction:column; gap:12px;">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-dashboard" style="margin-top: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Activités Récentes</h3>
+              <i data-lucide="activity" class="text-muted"></i>
+            </div>
+            <div id="dashboard-activities">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">État du Parc des Bus</h3>
+            </div>
+            <div style="position: relative; height: 220px; width: 100%; display: flex; justify-content: center;">
+              <canvas id="bus-status-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= REPARATIONS ================= -->
+      <section id="view-reparations" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Gestion des Réparations</h2>
+            <p class="list-meta">Workflow de suivi et de validation des réparations des bus</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNewReparationModal()">
+            <i data-lucide="plus"></i> Nouveau dossier
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="actions-row">
+            <div class="actions-left">
+              <input type="text" class="form-control" id="rep-filter-search" placeholder="Filtrer par bus ou description..." style="width: 250px;" oninput="renderReparations()">
+              <select class="form-control" id="rep-filter-statut" style="width: 150px;" onchange="renderReparations()">
+                <option value="">Tous les statuts</option>
+                <option value="En attente">En attente</option>
+                <option value="En cours">En cours</option>
+                <option value="Terminé">Terminés</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Bus</th>
+                  <th>Garage</th>
+                  <th>Description</th>
+                  <th>Date Début</th>
+                  <th>Date Prévue</th>
+                  <th>Coût Est.</th>
+                  <th>Statut</th>
+                  <th>Validation</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reparations-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PEINTURE ================= -->
+      <section id="view-peinture" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Gestion de la Peinture</h2>
+            <p class="list-meta">Suivi des devis, consommations et opérations de peinture</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNewPeintureModal()">
+            <i data-lucide="plus"></i> Nouveau devis/fiche
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fiche</th>
+                  <th>Réf Devis</th>
+                  <th>Bus</th>
+                  <th>Type de Peinture</th>
+                  <th>Surface (m²)</th>
+                  <th>Consommation (L)</th>
+                  <th>Coût Matière</th>
+                  <th>Main d'œuvre</th>
+                  <th>Coût Total</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="peinture-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= SUIVI PEINTURE EXCEL ================= -->
+      <section id="view-suivi-peinture" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Suivi des travaux de peinture</h2>
+            <p class="list-meta">Module reproduisant fidèlement les opérations du classeur Excel : traitement peinture, conversion CDF, quotas, affectation et synthèses.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="triggerExcelImport()"><i data-lucide="upload"></i> Importer Excel Peinture</button>
+            <input type="file" id="excel-import-file" accept=".xlsx, .xls, .csv" style="display:none;" onchange="handleExcelFileSelected(event)">
+            <button class="btn btn-secondary" onclick="exportPeintureCSV()"><i data-lucide="download"></i> Export CSV</button>
+            <button class="btn btn-primary" onclick="openExcelOperationModal()"><i data-lucide="plus"></i> Nouvelle opération peinture</button>
+          </div>
+        </div>
+
+        <div class="grid-stats" id="excel-kpis"></div>
+
+        <div class="grid-dashboard" style="margin-top:18px;">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Paramètres Excel</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="excel-rate">Taux USD → CDF</label>
+                <input class="form-control" id="excel-rate" type="number" min="1" step="1" onchange="updateExcelRate(this.value)">
+                <small class="list-meta">Le fichier utilise ce taux pour calculer les colonnes CDF.</small>
+              </div>
+              <div class="form-group">
+                <label for="excel-quota">Quota de suivis par bus</label>
+                <input class="form-control" id="excel-quota" type="number" min="1" step="1" onchange="updateExcelQuota(this.value)">
+                <small class="list-meta">Un bus atteint ce quota après le nombre défini de suivis peinture.</small>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Affectation automatique</h3></div>
+            <div id="excel-assignment-box" class="list-meta">Saisissez un numéro de bus et une période pour obtenir la recommandation.</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="card-header"><h3 class="card-title">Filtres de la synthèse par bus</h3></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="excel-filter-bus">Numéro du bus</label>
+              <input class="form-control" id="excel-filter-bus" placeholder="Ex. 021-" oninput="renderExcelModule()">
+            </div>
+            <div class="form-group">
+              <label for="excel-filter-garage">Garage</label>
+              <select class="form-control" id="excel-filter-garage" onchange="renderExcelModule()">
+                <option value="">Tous les garages</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="excel-filter-start">Date début</label>
+              <input class="form-control" id="excel-filter-start" type="date" onchange="renderExcelModule()">
+            </div>
+            <div class="form-group">
+              <label for="excel-filter-end">Date fin</label>
+              <input class="form-control" id="excel-filter-end" type="date" onchange="renderExcelModule()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="card-header">
+            <h3 class="card-title">Synthèse par garage</h3>
+            <span class="list-meta">Même logique que SYNTHESE PAR BUS</span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr>
+                <th>Garage</th><th>Bus traités</th><th>Incidents USD</th><th>Peinture USD</th>
+                <th>Délai moyen</th><th>Total facture USD</th><th>Total CDF</th><th>Quota</th>
+              </tr></thead>
+              <tbody id="excel-summary-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="card-header">
+            <h3 class="card-title">Traitement des travaux</h3>
+            <span class="list-meta" id="excel-count-label"></span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr>
+                <th>N°</th><th>Garage</th><th>Inscription</th><th>Chauffeur</th><th>Matricule</th>
+                <th>Véhicule</th><th>N° Fact.</th><th>Incident USD</th><th>Incident CDF</th>
+                <th>Peinture USD</th><th>Peinture CDF</th><th>Travaux à faire</th>
+                <th>Départ</th><th>Retour</th><th>Durée</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="excel-treatment-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SUIVI CARROSSERIE EXCEL ================= -->
+      <section id="view-suivi-carrosserie" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Suivi des travaux de carrosserie</h2>
+            <p class="list-meta">Module indépendant pour les travaux de tôlerie, débosselage et vitres — Synchronisé avec les incidents pour justifier les réparations des bus.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="triggerCarrosserieImport()"><i data-lucide="upload"></i> Importer Excel Carrosserie</button>
+            <input type="file" id="excel-carrosserie-import-file" accept=".xlsx, .xls, .csv" style="display:none;" onchange="handleCarrosserieFileSelected(event)">
+            <button class="btn btn-secondary" onclick="resetCarrosserieData()"><i data-lucide="trash-2"></i> Vider le registre</button>
+            <button class="btn btn-secondary" style="border-color:var(--color-primary); color:var(--color-primary);" onclick="syncCarrosserieWithIncidents(true)"><i data-lucide="shield-check"></i> Synchroniser avec Incidents</button>
+            <button class="btn btn-secondary" onclick="exportCarrosserieCSV()"><i data-lucide="download"></i> Export CSV</button>
+            <button class="btn btn-primary" onclick="openCarrosserieOperationModal()"><i data-lucide="plus"></i> Nouvelle opération carrosserie</button>
+          </div>
+        </div>
+
+        <div class="grid-stats" id="carrosserie-kpis"></div>
+
+        <div class="grid-dashboard" style="margin-top:18px;">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Paramètres Carrosserie</h3></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="carrosserie-rate">Taux USD → CDF</label>
+                <input class="form-control" id="carrosserie-rate" type="number" min="1" step="1" onchange="updateCarrosserieRate(this.value)">
+                <small class="list-meta">Taux de conversion appliqué aux factures de tôlerie/carrosserie.</small>
+              </div>
+              <div class="form-group">
+                <label for="carrosserie-quota">Quota de suivis par bus</label>
+                <input class="form-control" id="carrosserie-quota" type="number" min="1" step="1" onchange="updateCarrosserieQuota(this.value)">
+                <small class="list-meta">Un bus atteint ce quota après le nombre défini de suivis carrosserie.</small>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Justification & Traçabilité Incidents</h3></div>
+            <div id="carrosserie-assignment-box" class="list-meta">
+              Chaque réparation de carrosserie (tôlerie, vitres brisées, pare-chocs) est automatiquement reliée à un incident pour justifier les sinistres du bus.
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="card-header"><h3 class="card-title">Filtres du suivi carrosserie</h3></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="carrosserie-filter-bus">Numéro du bus</label>
+              <input class="form-control" id="carrosserie-filter-bus" placeholder="Ex. 101, 021-" oninput="renderCarrosserieModule()">
+            </div>
+            <div class="form-group">
+              <label for="carrosserie-filter-garage">Atelier / Garage</label>
+              <select class="form-control" id="carrosserie-filter-garage" onchange="renderCarrosserieModule()">
+                <option value="">Tous les ateliers</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="carrosserie-filter-start">Date début</label>
+              <input class="form-control" id="carrosserie-filter-start" type="date" onchange="renderCarrosserieModule()">
+            </div>
+            <div class="form-group">
+              <label for="carrosserie-filter-end">Date fin</label>
+              <input class="form-control" id="carrosserie-filter-end" type="date" onchange="renderCarrosserieModule()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="card-header">
+            <h3 class="card-title">Synthèse par atelier de carrosserie</h3>
+            <span class="list-meta">Bilan financier et volumes de tôlerie par atelier</span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr>
+                <th>Atelier</th><th>Bus réparés</th><th>Total Carrosserie USD</th><th>Total CDF</th>
+                <th>Délai moyen</th><th>Quota</th>
+              </tr></thead>
+              <tbody id="carrosserie-summary-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="card-header">
+            <h3 class="card-title">Registre des travaux de carrosserie</h3>
+            <span class="list-meta" id="carrosserie-count-label"></span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr>
+                <th>N°</th><th>Atelier</th><th>Inscription</th><th>Chauffeur</th><th>Matricule</th>
+                <th>Véhicule</th><th>N° Facture</th><th>Montant USD</th><th>Montant CDF</th>
+                <th>Dégâts / Travaux tôlerie</th><th>Incident rattaché / Justification</th>
+                <th>Départ</th><th>Retour</th><th>Durée</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="carrosserie-treatment-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= INCIDENTS ================= -->
+      <section id="view-incidents" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Déclaration des Incidents</h2>
+            <p class="list-meta">Signalement et priorisation des pannes et sinistres sur les bus</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNewIncidentModal()">
+            <i data-lucide="alert-triangle"></i> Déclarer un incident
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Bus</th>
+                  <th>Chauffeur</th>
+                  <th>Titre / Description</th>
+                  <th>Priorité</th>
+                  <th>Statut</th>
+                  <th>Justification Carrosserie</th>
+                  <th>Photo</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="incidents-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PLANNING ================= -->
+      <section id="view-planning" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Planning & Ateliers</h2>
+            <p class="list-meta">Occupation des garages et planning des interventions</p>
+          </div>
+        </div>
+        
+        <div class="grid-dashboard">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title" id="calendar-title">Planning - Juillet 2026</h3>
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-secondary btn-sm" onclick="prevMonth()"><i data-lucide="chevron-left"></i></button>
+                <button class="btn btn-secondary btn-sm" onclick="nextMonth()"><i data-lucide="chevron-right"></i></button>
+              </div>
+            </div>
+            <div class="calendar-grid" id="calendar-grid">
+              <!-- Rendered dynamically in app.js -->
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Taux d'occupation des Garages</h3>
+            </div>
+            <div id="garages-occupancy-list" style="display:flex; flex-direction:column; gap:16px; margin-top:15px;">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= VEHICULES (BUS) ================= -->
+      <section id="view-bus" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Parc Automobile - Fiches Bus</h2>
+            <p class="list-meta">Fiches d'identification, kilométrage et historique de maintenance</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNewBusModal()">
+            <i data-lucide="plus"></i> Ajouter un véhicule
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>N° Parc</th>
+                  <th>Immatriculation</th>
+                  <th>Marque & Modèle</th>
+                  <th>Année</th>
+                  <th>Kilométrage</th>
+                  <th>Motorisation</th>
+                  <th>Documents</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="bus-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= GARAGES ================= -->
+      <section id="view-garages" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Fiches Garages & Partenaires</h2>
+            <p class="list-meta">Gestion des ateliers, de leurs adresses et des quotas d'accueil</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNewGarageModal()">
+            <i data-lucide="plus"></i> Ajouter un garage
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nom du Garage</th>
+                  <th>Adresse</th>
+                  <th>Téléphone</th>
+                  <th>Capacité d'accueil (Quota)</th>
+                  <th>Passages</th>
+                  <th>Interventions en cours</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="garages-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CHAUFFEURS ================= -->
+      <section id="view-chauffeurs" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Registre des Chauffeurs</h2>
+            <p class="list-meta">Gestion des chauffeurs de bus et affectations des véhicules</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="triggerChauffeurImport()">
+              <i data-lucide="upload"></i> Importer
+            </button>
+            <button class="btn btn-primary" onclick="openNewChauffeurModal()">
+              <i data-lucide="plus"></i> Ajouter un chauffeur
+            </button>
+          </div>
+        </div>
+
+        <input type="file" id="chauffeur-import-file" accept=".xlsx,.xls,.csv,.txt,.json" style="display:none;" onchange="handleChauffeurFileSelected(event)">
+
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Matricule</th>
+                  <th>Nom & Prénom</th>
+                  <th>Téléphone</th>
+                  <th>Bus Affecté</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="chauffeurs-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PIECES DETACHEES ================= -->
+      <section id="view-pieces" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Inventaire & Pièces Détachées</h2>
+            <p class="list-meta">Gestion des stocks et pièces détachées nécessaires aux réparations</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNewPieceModal()">
+            <i data-lucide="plus"></i> Nouvelle pièce
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Désignation</th>
+                  <th>Catégorie</th>
+                  <th>Stock Actuel</th>
+                  <th>Seuil Alerte</th>
+                  <th>Prix Unitaire</th>
+                  <th>Fournisseur</th>
+                  <th>Status Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="pieces-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= FOURNISSEURS ================= -->
+      <section id="view-fournisseurs" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Annuaire des Fournisseurs</h2>
+            <p class="list-meta">Commandes de pièces détachées et suivi des factures</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNewFournisseurModal()">
+            <i data-lucide="plus"></i> Nouveau fournisseur
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Contact</th>
+                  <th>Téléphone</th>
+                  <th>Email</th>
+                  <th>Commandes en cours</th>
+                  <th>Encours Facturation</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="fournisseurs-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SAUVEGARDE & API ================= -->
+      <section id="view-backup-api" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Sauvegardes & Console API</h2>
+            <p class="list-meta">Exportation, Restauration des données et tests d'appels API REST</p>
+          </div>
+        </div>
+
+        <div class="grid-dashboard">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Sauvegarde & Restauration</h3>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <p class="list-meta">Permet d'exporter l'intégralité de la base de données actuelle dans un fichier JSON local, ou de restaurer une sauvegarde précédente.</p>
+              <div style="display:flex; gap:12px;">
+                <button class="btn btn-primary" onclick="exportBackup()">
+                  <i data-lucide="download"></i> Exporter la base
+                </button>
+                <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()">
+                  <i data-lucide="upload"></i> Importer une sauvegarde
+                </button>
+                <input type="file" id="import-file-input" style="display:none;" onchange="importBackup(event)">
+              </div>
+              <div style="margin-top:10px;">
+                <button class="btn btn-danger" onclick="confirmResetDB()">
+                  <i data-lucide="rotate-ccw"></i> Réinitialiser l'ERP aux données d'origine
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Console API REST (Simulation)</h3>
+            </div>
+            <div>
+              <div style="display:flex; gap:8px; margin-bottom:10px;">
+                <select class="form-control" id="api-method" style="width:100px;">
+                  <option value="GET">GET</option>
+                  <option value="POST">POST</option>
+                </select>
+                <select class="form-control" id="api-endpoint" style="flex:1;">
+                  <option value="/api/bus">/api/bus (Liste des bus)</option>
+                  <option value="/api/garages">/api/garages (Liste des garages)</option>
+                  <option value="/api/reparations">/api/reparations (Dossiers de réparations)</option>
+                  <option value="/api/pieces">/api/pieces (Stocks de pièces)</option>
+                </select>
+                <button class="btn btn-primary" onclick="runSimulatedAPI()">Envoyer</button>
+              </div>
+              <div class="terminal" id="api-terminal">
+                <div class="terminal-line"><span class="terminal-info">[Info]</span> Prêt à recevoir des requêtes. Sélectionnez une méthode et un endpoint.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= UTILISATEURS ================= -->
+      <section id="view-users" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Gestion des Utilisateurs</h2>
+            <p class="list-meta">Gestion des profils et des droits d'accès au système</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNewUserModal()">
+            <i data-lucide="plus"></i> Nouvel utilisateur
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nom complet</th>
+                  <th>Nom d'utilisateur</th>
+                  <th>Email</th>
+                  <th>Rôle</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body">
+                <!-- Rendu dynamique -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= JOURNAL D'AUDIT ================= -->
+      <section id="view-audit" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Journal d'audit</h2>
+            <p class="list-meta">Suivi en temps réel de toutes les actions réalisées sur l'ERP</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date & Heure</th>
+                  <th>Utilisateur</th>
+                  <th>Action</th>
+                  <th>Détails</th>
+                </tr>
+              </thead>
+              <tbody id="audit-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PARAMETRES ================= -->
+      <section id="view-settings" class="view-container">
+        <div class="actions-row">
+          <div>
+            <h2>Paramètres généraux</h2>
+            <p class="list-meta">Configuration globale de l'application et taux de taxes</p>
+          </div>
+        </div>
+        
+        <div class="card" style="max-width:600px;">
+          <form id="settings-form" onsubmit="saveSettings(event)">
+            <div class="form-group">
+              <label for="settings-tva">Taux de TVA (%)</label>
+              <input type="number" class="form-control" id="settings-tva" step="0.1" required>
+            </div>
+            <div class="form-group">
+              <label for="settings-mo">Coût Horaire Main d'Œuvre ($/h)</label>
+              <input type="number" class="form-control" id="settings-mo" required>
+            </div>
+            <div class="form-group">
+              <label>Types d'incidents enregistrés (séparés par des virgules)</label>
+              <input type="text" class="form-control" id="settings-incidents">
+            </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="settings-alerts" style="width:18px; height:18px; cursor:pointer;">
+              <label for="settings-alerts" style="margin-bottom:0; cursor:pointer;">Activer les notifications automatiques par email (simulation)</label>
+            </div>
+            <button class="btn btn-primary" type="submit">Enregistrer les paramètres</button>
+          </form>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ================= MODAL REUSABLE OVERLAY ================= -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Titre du Modal</h3>
+        <button class="icon-btn" onclick="closeModal(event, true)">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Rendered dynamically in app.js -->
+      </div>
+      <div class="modal-footer" id="modal-footer">
+        <!-- Rendered dynamically in app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Load scripts in order -->
+  <script src="xlsx.full.min.js"></script>
+  <script src="excel_peinture_data.js?v=1.0.2"></script>
+  <script src="db.js?v=1.0.2"></script>
+  <script src="app.js?v=1.0.4"></script>
+</body>
+</html>

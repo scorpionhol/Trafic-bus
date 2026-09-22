@@ -1,0 +1,13 @@
+{
+  "name": "trafic-bus-erp",
+  "version": "1.0.0",
+  "description": "ERP Web pour la gestion des réparations, peinture, garages, pièces détachées et conducteurs des bus.",
+  "scripts": {
+    "dev": "npx -y http-server -p 3000 -o"
+  },
+  "author": "Antigravity",
+  "license": "ISC",
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}
